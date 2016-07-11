@@ -5,9 +5,9 @@
  * Created on June 13, 2016, 10:44 AM
  */
 
+#include <ncurses.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <time.h>
 
 #include "main.h"
@@ -15,34 +15,18 @@
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-char map[20][48] = {
-    "################################################",
-    "#                                              #",
-    "#                                              #",
-    "#                                              #",
-    "#                                              #",
-    "#                                              #",
-    "#                                              #",
-    "#                                              #",
-    "#                                              #",
-    "#                                              #",
-    "#                                              #",
-    "#                                              #",
-    "#                                              #",
-    "#                                              #",
-    "#                                              #",
-    "#                                              #",
-    "#                                              #",
-    "#                                              #",
-    "#                                              #",
-    "################################################"
-};
-
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
 int main(int argc, char** argv) {
+
     srand(time(NULL));
+
+    initscr();
+    curs_set(0);
+    keypad(stdscr, TRUE);
+    nodelay(stdscr, TRUE);
+
+    start_color();
+    init_pair(1, COLOR_BLACK, COLOR_WHITE);
+    init_pair(2, COLOR_WHITE, COLOR_BLACK);
 
     int gamespeed = 25; // milli seconds
     int direction = DIR_RIGHT;
@@ -55,47 +39,32 @@ int main(int argc, char** argv) {
     do {
         food_create(&food, snake);
         paint(snake, food);
-        Sleep(gamespeed);
-        System("CLS");
+        sleep(gamespeed);
+        refresh();
     } while (simulate(&snake, &direction, &food));
 
     snake_destroy(&snake);
+    endwin();
+
     return 0;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
 void paint(struct SnakeNode *snake, struct Food food) {
     struct SnakeNode *node = snake;
-    int x, y;
 
-    for (y = 0; y < 20; y++) {
-        for (x = 0; x < 48; x++) {
-            printf("%c", map[y][x]);
-        }
-        printf("\n");
-    }
-
-    cursor(food.x, food.y);
-    printf("$");
-
+    attron(COLOR_PAIR(1));
     while (node != NULL) {
-        cursor(node->x, node->y);
-        printf("*");
-
+        mvaddch(node->y, node->x, ' ');
         node = node->next;
     }
-}
+    attroff(COLOR_PAIR(1));
 
-void cursor(int col, int row) {
-    COORD c;
-
-    c.X = col;
-    c.Y = row;
-
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
+    attron(COLOR_PAIR(2)|A_BOLD);
+    mvaddch(food.y, food.x, '#');
+    attroff(COLOR_PAIR(2)|A_BOLD);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -103,14 +72,21 @@ void cursor(int col, int row) {
 
 int simulate(struct SnakeNode **snake, int *direction, struct Food *food) {
 
-    if (GetAsyncKeyState(VK_RIGHT)) {
-        if (*direction != DIR_LEFT) *direction = DIR_RIGHT;
-    } else if (GetAsyncKeyState(VK_LEFT)) {
-        if (*direction != DIR_RIGHT) *direction = DIR_LEFT;
-    } else if (GetAsyncKeyState(VK_UP)) {
-        if (*direction != DIR_UP) *direction = DIR_DOWN;
-    } else if (GetAsyncKeyState(VK_DOWN)) {
-        if (*direction != DIR_DOWN) *direction = DIR_UP;
+    switch(getch()) {
+        case KEY_RIGHT:
+            if (*direction != DIR_LEFT) *direction = DIR_RIGHT;
+            break;
+        case KEY_LEFT:
+            if (*direction != DIR_RIGHT) *direction = DIR_LEFT;
+            break;
+        case KEY_UP:
+            if (*direction != DIR_UP) *direction = DIR_DOWN;
+            break;
+        case KEY_DOWN:
+            if (*direction != DIR_DOWN) *direction = DIR_UP;
+            break;
+        default:
+            break;
     }
 
     snake_move(snake);
@@ -119,7 +95,7 @@ int simulate(struct SnakeNode **snake, int *direction, struct Food *food) {
     int game_over = !snake_bitten(*snake);
     if (game_over) {
         paint(*snake, *food);
-        Sleep(2000);
+        sleep(2000);
     }
 
     int food_eaten = (*snake)->x == (*food).x && (*snake)->y == (*food).y;
@@ -225,7 +201,11 @@ void snake_move(SnakeNode** snake) {
     struct SnakeNode *node_lhs = NULL;
     struct SnakeNode *node_rhs = NULL;
 
-    for (int i = snake_size(*snake) - 1; i > 0; i--) {
+    int size = snake_size(*snake);
+    node_lhs = snake_node(*snake, size - 1);
+    mvaddch(node_lhs->y, node_lhs->x, ' ');
+
+    for (int i = size - 1; i > 0; i--) {
         node_lhs = snake_node(*snake, i);
         node_rhs = snake_node(*snake, i - 1);
         node_lhs->x = node_rhs->x;
@@ -235,25 +215,28 @@ void snake_move(SnakeNode** snake) {
 
 void snake_teleport(SnakeNode** snake, int* direction) {
 
+    int row, col;
+    getmaxyx(stdscr, row, col);
+
     if (*direction == DIR_RIGHT) {
         (*snake)->x = (*snake)->x + 1;
-        if ((*snake)->x > 48) {
-            (*snake)->x = 1;
+        if ((*snake)->x > col - 1) {
+            (*snake)->x = 0;
         }
     } else if (*direction == DIR_LEFT) {
         (*snake)->x = (*snake)->x - 1;
-        if ((*snake)->x < 1) {
-            (*snake)->x = 48;
+        if ((*snake)->x < 0) {
+            (*snake)->x = col - 1;
         }
     } else if (*direction == DIR_DOWN) {
         (*snake)->y = (*snake)->y - 1;
-        if ((*snake)->y < 1) {
-            (*snake)->y = 18;
+        if ((*snake)->y < 0) {
+            (*snake)->y = row - 1;
         }
     } else { //DIR_UP?
         (*snake)->y = (*snake)->y + 1;
-        if ((*snake)->y > 18) {
-            (*snake)->y = 1;
+        if ((*snake)->y > row - 1) {
+            (*snake)->y = 0;
         }
     }
 }
@@ -278,6 +261,17 @@ void snake_destroy(struct SnakeNode **snake) {
         *snake = (*snake)->next;
         free(node);
     }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+void sleep(int ms) {
+    struct timespec *ts = (struct timespec *)malloc(sizeof(struct timespec));
+    ts->tv_sec = 0;
+    ts->tv_nsec = 1E6*ms;
+    nanosleep(ts, NULL);
+    free(ts);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
