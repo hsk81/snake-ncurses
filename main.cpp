@@ -112,9 +112,12 @@ int simulate(struct SnakeNode **snake, int *direction, struct Food *food) {
 
 void food_create(struct Food *food, struct SnakeNode *snake) {
 
+    int row, col;
+    getmaxyx(stdscr, row, col);
+
     if (food->eaten) do {
-        food->x = rand() % 48 + 1;
-        food->y = rand() % 18 + 1;
+        food->x = 0.90 * (rand() % col) + 0.05 * col;
+        food->y = 0.90 * (rand() % row) + 0.05 * row;
     } while (snake_fed(snake, food));
 
     food->eaten = 0;
