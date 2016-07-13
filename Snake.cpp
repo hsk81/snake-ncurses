@@ -62,7 +62,7 @@ bool Snake::bitten() const {
     SnakeNode *node = head->next;
 
     while (node) {
-        if (head->x == node->x && head->y == node->y) {
+        if (node->at(head->x, head->y)) {
             return true;
         }
         node = node->next;
