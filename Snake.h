@@ -15,8 +15,8 @@ class SnakeNode;
 
 class Snake {
 private:
-    SnakeNode *head;
     Direction direction;
+    SnakeNode *head;
 
 public:
     Snake(int x = 0, int y = 0, int size = 2, Direction dir = RIGHT);
@@ -36,9 +36,10 @@ public:
     void grow();
 
 public:
-    void move(const Direction direction);
+    void move(const Direction dir);
 private:
-    void teleport(const Direction direction);
+    void move_body();
+    void move_head();
 
 public:
     void paint() const;

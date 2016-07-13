@@ -97,7 +97,11 @@ void Snake::grow() {
 
 void Snake::move(const Direction dir) {
     this->direction = dir;
-    
+    this->move_body();
+    this->move_head();
+}
+
+void Snake::move_body() {
     SnakeNode *node_lhs = 0;
     SnakeNode *node_rhs = 0;
 
@@ -111,38 +115,36 @@ void Snake::move(const Direction dir) {
         node_lhs->x = node_rhs->x;
         node_lhs->y = node_rhs->y;
     }
-
-    this->teleport(dir);
 }
 
-void Snake::teleport(const Direction dir) {
+void Snake::move_head() {
     SnakeNode *head = this->head;
 
     int row, col;
     getmaxyx(stdscr, row, col);
 
-    if (dir == RIGHT) {
+    if (this->direction == RIGHT) {
         head->x = head->x + 1;
         if (head->x > col - 1) {
             head->x = 0;
         }
         return;
     }
-    if (dir == LEFT) {
+    if (this->direction == LEFT) {
         head->x = head->x - 1;
         if (head->x < 0) {
             head->x = col - 1;
         }
         return;
     }
-    if (dir == DOWN) {
+    if (this->direction == DOWN) {
         head->y = head->y - 1;
         if (head->y < 0) {
             head->y = row - 1;
         }
         return;
     }
-    if (dir == UP) {
+    if (this->direction == UP) {
         head->y = head->y + 1;
         if (head->y > row - 1) {
             head->y = 0;
