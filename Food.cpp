@@ -26,17 +26,16 @@ bool Food::at(const SnakeNode* node) const {
 }
 
 void Food::reset(const Snake* snake) {
-
     if (this->is_eaten) {
         this->is_eaten = false;
 
         int row, col;
         getmaxyx(stdscr, row, col);
 
-        do {
+        do { //@todo: de-randomize!
             this->x = 0.90 * (rand() % col) + 0.05 * col;
             this->y = 0.90 * (rand() % row) + 0.05 * row;
-        } while (snake->is_fed(this)); //@todo: de-randomize!
+        } while (snake->at(this));
     }
 }
 
@@ -46,10 +45,7 @@ void Food::paint() const {
     attroff(COLOR_PAIR(2) | A_BOLD);
 }
 
-bool Food::getEaten() const {
+bool Food::eaten() {
+    this->is_eaten = true;
     return this->is_eaten;
-}
-
-void Food::setEaten(bool is_eaten) {
-    this->is_eaten = is_eaten;
 }

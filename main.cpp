@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
     Snake *snake = new Snake(0, 0, 5);
     Food *food = new Food(0, 0);
 
-    while (!snake->is_bitten()) {
+    while (!snake->bitten()) {
         food->reset(snake);
         food->paint();
         snake->paint();

@@ -28,8 +28,8 @@ public:
     int get_size() const;
 
 public:
-    bool is_bitten() const;
-    bool is_fed(const Food *food) const;
+    bool bitten() const;
+    bool at(const Food *food) const;
 
 public:
     bool consume(Food *food) const;

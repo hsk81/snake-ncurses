@@ -28,8 +28,7 @@ public:
 private:
     bool is_eaten;
 public:
-    bool getEaten() const;
-    void setEaten(bool is_eaten);
+    bool eaten();
 };
 
 #endif /* FOOD_H */

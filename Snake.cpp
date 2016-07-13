@@ -57,7 +57,7 @@ int Snake::get_size() const {
     return size;
 }
 
-bool Snake::is_bitten() const {
+bool Snake::bitten() const {
     SnakeNode *head = this->head;
     SnakeNode *node = head->next;
 
@@ -70,7 +70,7 @@ bool Snake::is_bitten() const {
     return false;
 }
 
-bool Snake::is_fed(const Food *food) const {
+bool Snake::at(const Food *food) const {
     SnakeNode *node = this->head;
 
     while (node && food) {
@@ -83,10 +83,10 @@ bool Snake::is_fed(const Food *food) const {
 }
 
 bool Snake::consume(Food *food) const {
-    if (this->is_fed(food)) {
-        food->setEaten(true);
+    if (this->at(food)) {
+        return food->eaten();
     }
-    return food->getEaten();
+    return false;
 }
 
 void Snake::grow() {
