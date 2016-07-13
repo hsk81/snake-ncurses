@@ -97,6 +97,12 @@
         <asmTool>
           <developmentMode>5</developmentMode>
         </asmTool>
+        <linkerTool>
+          <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/snake</output>
+          <linkerLibItems>
+            <linkerLibStdlibItem>Curses</linkerLibStdlibItem>
+          </linkerLibItems>
+        </linkerTool>
       </compileType>
       <item path="Direction.h" ex="false" tool="3" flavor2="0">
       </item>
