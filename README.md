@@ -3,16 +3,19 @@
 Keep eating the yummy pound signs till you bite yourself! ;)
 
 ## Build
-
-make
+```bash
+$ make
+```
 
 ## Run (release)
-
-./dist/Release/GNU-Linux/snake
+```bash
+$ ./dist/Release/GNU-Linux/snake
+```
 
 ## Run (debug)
-
+```bash
 ./dist/Debug/GNU-Linux/snake
+```
 
 ## Quit
 
@@ -20,7 +23,7 @@ CTRL+C
 
 ## Controls
 
-Use up, down, left and right arrow buttons.
+Use `up`, `down`, `left` and `right` arrow buttons.
 
 ## Author
 
