@@ -7,24 +7,20 @@ Keep eating the yummy pound signs till you bite yourself! ;)
 $ make
 ```
 
-## Run (release)
+## Run
 ```bash
 $ ./dist/Release/GNU-Linux/snake
 ```
 
-## Run (debug)
-```bash
-./dist/Debug/GNU-Linux/snake
-```
-
 ## Quit
-
+```
 CTRL+C
+```
 
 ## Controls
 
-Use `up`, `down`, `left` and `right` arrow buttons.
+Use `up`, `down`, `left` and `right` arrow buttons to control the snake.
 
 ## Author
 
-2016, Hasan Karahan <hasan.karahan@blackhan.com>
+(c) 2016, Hasan Karahan <hasan.karahan@blackhan.com>
